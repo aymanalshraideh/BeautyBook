@@ -1,32 +1,31 @@
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-const userRepository = require('../repositories/user.repository');
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const userRepository = require("../repositories/user.repository");
 
 class UserService {
-async register(userData) {
-  const existingUser = await userRepository.findByEmail(userData.email);
-  if (existingUser) {
-    throw new Error('Email is already registered');
+  async register(userData) {
+    const existingUser = await userRepository.findByEmail(userData.email);
+    if (existingUser) {
+      throw new Error("Email is already registered");
+    }
+
+    const hashedPassword = await bcrypt.hash(userData.password, 10);
+    userData.password = hashedPassword;
+    userData.role = "customer";
+    return userRepository.create(userData);
   }
-
-  const hashedPassword = await bcrypt.hash(userData.password, 10);
-  userData.password = hashedPassword;
-
-  return userRepository.create(userData);
-}
-
 
   async login(email, password) {
     const user = await userRepository.findByEmail(email);
-    if (!user) throw new Error('Invalid email or password');
+    if (!user) throw new Error("Invalid email or password");
 
     const match = await bcrypt.compare(password, user.password);
-    if (!match) throw new Error('Invalid email or password');
+    if (!match) throw new Error("Invalid email or password");
 
     const token = jwt.sign(
       { userId: user.id, role: user.role },
       process.env.JWT_SECRET,
-      { expiresIn: '1d' }
+      { expiresIn: "1d" }
     );
     return { token, user };
   }
@@ -35,10 +34,9 @@ async register(userData) {
     return userRepository.findAll();
   }
 
-//  async getById(id) {
-//   return userRepository.findById(Number(id));
-// }
-
+  //  async getById(id) {
+  //   return userRepository.findById(Number(id));
+  // }
 
   async update(id, data) {
     if (data.password) {

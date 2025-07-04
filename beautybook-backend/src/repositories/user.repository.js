@@ -29,6 +29,36 @@ class UserRepository {
     return prisma.user.delete({ where: { id: Number(id) }
  });
   }
+  async findAllStaff() {
+  return prisma.user.findMany({
+    where: { role: 'staff' },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      specialization: true,
+      createdAt: true,
+    },
+  });
+}
+
+async findStaffById(id) {
+  return prisma.user.findFirst({
+    where: { id: Number(id), role: 'staff' },
+  });
+}
+async findAllCustomers() {
+  return prisma.user.findMany({
+    where: { role: 'customer' },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      createdAt: true
+    }
+  });
+}
+
 }
 
 module.exports = new UserRepository();
