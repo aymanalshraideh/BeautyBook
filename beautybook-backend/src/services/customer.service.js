@@ -1,8 +1,8 @@
-const userRepository = require('../repositories/user.repository');
+const userRepository = require("../repositories/user.repository");
 
 class CustomerService {
-  async getAllCustomers() {
-    return userRepository.findAllCustomers();
+  async getPaginatedCustomers(page, limit) {
+    return userRepository.findAllCustomersPaginated(page, limit);
   }
 
   async deleteCustomer(id) {

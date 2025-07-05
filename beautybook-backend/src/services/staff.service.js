@@ -1,18 +1,18 @@
-const bcrypt = require('bcrypt');
-const userRepository = require('../repositories/user.repository');
+const bcrypt = require("bcrypt");
+const userRepository = require("../repositories/user.repository");
 
 class StaffService {
   async createStaff(data) {
     const existing = await userRepository.findByEmail(data.email);
-    if (existing) throw new Error('Email already exists');
+    if (existing) throw new Error("Email already exists");
 
     data.password = await bcrypt.hash(data.password, 10);
-    data.role = 'staff'; 
+    data.role = "staff";
     return userRepository.create(data);
   }
 
-  async getAllStaff() {
-    return userRepository.findAllStaff();
+  async getPaginatedStaff(page, limit) {
+    return userRepository.findAllStaffPaginated(page, limit);
   }
 
   async getStaffById(id) {
@@ -29,8 +29,6 @@ class StaffService {
   async deleteStaff(id) {
     return userRepository.delete(id);
   }
-
-
 }
 
 module.exports = new StaffService();

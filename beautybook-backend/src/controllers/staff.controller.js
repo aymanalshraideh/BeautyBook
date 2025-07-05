@@ -1,4 +1,4 @@
-const staffService = require('../services/staff.service');
+const staffService = require("../services/staff.service");
 
 class StaffController {
   async create(req, res) {
@@ -11,13 +11,16 @@ class StaffController {
   }
 
   async getAll(req, res) {
-    const staff = await staffService.getAllStaff();
-    res.json(staff);
+    const page = req.query.page || 1;
+    const limit = req.query.limit || 10;
+
+    const result = await staffService.getPaginatedStaff(page, limit);
+    res.json(result);
   }
 
   async getById(req, res) {
     const staff = await staffService.getStaffById(req.params.id);
-    if (!staff) return res.status(404).json({ error: 'Staff not found' });
+    if (!staff) return res.status(404).json({ error: "Staff not found" });
     res.json(staff);
   }
 
@@ -33,7 +36,7 @@ class StaffController {
   async delete(req, res) {
     try {
       await staffService.deleteStaff(req.params.id);
-      res.status(200).json({ message: 'Staff deleted successfully' });
+      res.status(200).json({ message: "Staff deleted successfully" });
     } catch (err) {
       res.status(400).json({ error: err.message });
     }
