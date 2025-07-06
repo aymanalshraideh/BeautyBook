@@ -1,21 +1,46 @@
-
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import Login from './pages/auth/Login';
-import Register from './pages/auth/Register';
-import Dashboard from './pages/Dashboard/Dashboard';
+import { Routes, Route } from "react-router-dom";
+import Login from "./pages/auth/Login";
+import Register from "./pages/auth/Register";
+import Dashboard from "./pages/Dashboard/Dashboard";
+import PrivateRoute from "./routes/PrivateRoute";
+import Navbar from "./components/Navbar";
 
 function App() {
-  const token = localStorage.getItem('token');
-
   return (
-    <Router>
+    <>
+      <Navbar />
       <Routes>
-        <Route path="/" element={token ? <Dashboard /> : <Navigate to="/login" />} />
-        <Route path="/login" element={!token ? <Login /> : <Navigate to="/" />} />
-        <Route path="/register" element={!token ? <Register /> : <Navigate to="/" />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+
+        <Route
+          path="/admin"
+          element={
+            <PrivateRoute roles={["admin"]}>
+              <Dashboard />
+            </PrivateRoute>
+          }
+        />
+
+        <Route
+          path="/staff"
+          element={
+            <PrivateRoute roles={["admin","staff"]}>
+              <Dashboard />
+            </PrivateRoute>
+          }
+        />
+
+        <Route
+          path="/customer"
+          element={
+            <PrivateRoute roles={["customer"]}>
+              <Dashboard />
+            </PrivateRoute>
+          }
+        />
       </Routes>
-    </Router>
+    </>
   );
 }
 
