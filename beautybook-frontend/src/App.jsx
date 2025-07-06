@@ -2,9 +2,11 @@ import { Routes, Route } from "react-router-dom";
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
 import Dashboard from "./pages/Dashboard/Dashboard";
+import StaffPage from "./pages/Dashboard/admin/StaffPage";
 import PrivateRoute from "./routes/PrivateRoute";
 import Navbar from "./components/Navbar";
-
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 function App() {
   return (
     <>
@@ -25,8 +27,8 @@ function App() {
         <Route
           path="/staff"
           element={
-            <PrivateRoute roles={["admin","staff"]}>
-              <Dashboard />
+            <PrivateRoute roles={["admin"]}>
+              <StaffPage />
             </PrivateRoute>
           }
         />
@@ -40,6 +42,7 @@ function App() {
           }
         />
       </Routes>
+       <ToastContainer position="top-right" autoClose={3000} />
     </>
   );
 }

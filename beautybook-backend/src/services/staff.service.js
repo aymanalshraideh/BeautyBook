@@ -11,8 +11,8 @@ class StaffService {
     return userRepository.create(data);
   }
 
-  async getPaginatedStaff(page, limit) {
-    return userRepository.findAllStaffPaginated(page, limit);
+  async getPaginatedStaff(page, limit ,search) {
+    return userRepository.findAllStaffPaginated(page, limit,search);
   }
 
   async getStaffById(id) {

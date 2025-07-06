@@ -26,32 +26,46 @@ class UserRepository {
   async delete(id) {
     return prisma.user.delete({ where: { id: Number(id) } });
   }
-  async findAllStaffPaginated(page = 1, limit = 10) {
-    const skip = (page - 1) * limit;
+async findAllStaffPaginated(page = 1, limit = 10, search = "") {
+  const skip = (page - 1) * limit;
 
-    const [data, total] = await Promise.all([
-      prisma.user.findMany({
-        where: { role: "staff" },
-        skip,
-        take: Number(limit),
-        select: {
-          id: true,
-          name: true,
-          email: true,
-          createdAt: true,
-        },
-      }),
-      prisma.user.count({ where: { role: "staff" } }),
-    ]);
+  const searchTerm = String(search || "").trim();
 
-    return {
-      data,
-      total,
-      page: Number(page),
-      limit: Number(limit),
-      totalPages: Math.ceil(total / limit),
-    };
-  }
+  const where = {
+    role: "staff",
+    ...(searchTerm && {
+      OR: [
+        { name: { contains: searchTerm } },
+        { email: { contains: searchTerm } },
+      ],
+    }),
+  };
+
+  const [data, total] = await Promise.all([
+    prisma.user.findMany({
+      where,
+      skip,
+      take: Number(limit),
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        createdAt: true,
+      },
+    }),
+    prisma.user.count({ where }),
+  ]);
+
+  return {
+    data,
+    total,
+    page: Number(page),
+    limit: Number(limit),
+    totalPages: Math.ceil(total / limit),
+  };
+}
+
+
 
   async findStaffById(id) {
     return prisma.user.findFirst({

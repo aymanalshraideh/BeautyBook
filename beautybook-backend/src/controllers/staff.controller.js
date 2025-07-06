@@ -13,8 +13,9 @@ class StaffController {
   async getAll(req, res) {
     const page = req.query.page || 1;
     const limit = req.query.limit || 10;
+    const search = req.query.search || '';
 
-    const result = await staffService.getPaginatedStaff(page, limit);
+    const result = await staffService.getPaginatedStaff(page, limit,search);
     res.json(result);
   }
 
