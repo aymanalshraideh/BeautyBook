@@ -2,10 +2,11 @@ import React from "react";
 
 function SearchInput({ value, onChange, placeholder = "Search..." }) {
   return (
-    <div className="d-flex justify-content-center">
+    <div className="">
+           <label>Search</label>
       <input
         type="text"
-        className="form-control mb-3 w-100 "
+        className="form-control  "
         placeholder={placeholder}
         value={value}
         onChange={(e) => onChange(e.target.value)}

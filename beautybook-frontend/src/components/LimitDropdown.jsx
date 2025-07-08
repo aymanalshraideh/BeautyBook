@@ -2,8 +2,8 @@ import React from 'react';
 
 function LimitDropdown({ limit, onLimitChange }) {
   return (
-    <div className="mb-3 d-flex align-items-center">
-
+    <div className="">
+     <label>Limit</label>
       <select
         className="form-select w-auto"
         value={limit}

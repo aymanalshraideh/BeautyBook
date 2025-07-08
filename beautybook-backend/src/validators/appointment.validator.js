@@ -6,6 +6,7 @@ const appointmentSchema = z.object({
   serviceId: z.number({ required_error: "Service is required" }),
   customerId: z.number().optional(), 
   staffId: z.number().optional(), 
+  status: z.enum(["pending", "completed", "canceled"]).optional(),
 });
 
 module.exports = {

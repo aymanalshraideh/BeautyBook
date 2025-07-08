@@ -2,17 +2,20 @@ const appointmentRepository = require("../repositories/appointment.repository");
 
 class AppointmentService {
   async createAppointment(data, user) {
+    console.log("rr", data);
+
     if (user.role === "customer") {
       data.customerId = user.userId;
-      data.staffId = null; // سيُعين لاحقًا إذا لزم
-    } else {
+      data.staffId = null;
+    } else if (data.staffId == null || data.staffId === "undefined") {
       data.staffId = user.userId;
     }
+
     return appointmentRepository.create(data);
   }
 
-  async getAllAppointmentsPaginated(page, limit) {
-    return appointmentRepository.findAllPaginated(page, limit);
+  async getAllAppointmentsPaginated(page, limit , search) {
+    return appointmentRepository.findAllPaginated(page, limit , search);
   }
 
   async getAppointmentById(id) {

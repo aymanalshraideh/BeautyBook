@@ -1,20 +1,15 @@
 import React, { useEffect, useState, useCallback } from "react";
-import {
-  getStaff,
-  createStaff,
-  updateStaff,
-  deleteStaff,
-} from "../../../services/staffService";
-import StaffTable from "../../../components/admin/staff/StaffTable";
-import StaffModal from "../../../components/admin/staff/StaffModal";
+import { getServices, createService, updateService, deleteService } from "../../../services/serviceService";
+import ServiceTable from "../../../components/admin/services/ServiceTable";
+import ServiceModal from "../../../components/admin/services/ServiceModal";
 import Pagination from "../../../components/Pagination";
 import LimitDropdown from "../../../components/LimitDropdown";
 import SearchInput from "../../../components/SearchInput";
 import { toast } from "react-toastify";
 
-function StaffPage() {
-  const [staffList, setStaffList] = useState([]);
-  const [editingStaff, setEditingStaff] = useState(null);
+function ServicePage() {
+  const [services, setServices] = useState([]);
+  const [editingService, setEditingService] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [pagination, setPagination] = useState({
     page: 1,
@@ -23,10 +18,14 @@ function StaffPage() {
   });
   const [limit, setLimit] = useState(10);
   const [search, setSearch] = useState("");
-  const loadStaff = useCallback(
+
+
+  const loadServices = useCallback(
     async (page = 1, limit = 10) => {
-      const res = await getStaff(page, limit, search);
-      setStaffList(res.data.data);
+      
+        
+      const res = await getServices(page, limit, search);
+      setServices(res.data.data);
       setPagination({
         page: res.data.page,
         limit: res.data.limit,
@@ -37,90 +36,116 @@ function StaffPage() {
   );
 
   useEffect(() => {
-    loadStaff();
-  }, [loadStaff]);
+    loadServices();
+  }, [loadServices]);
 
+  
   const handleSave = async (data) => {
     try {
-      if (editingStaff) {
-        await updateStaff(editingStaff.id, data);
-        toast.success("Staff updated successfully");
+            
+    if (data.price) {
+      data.price = parseFloat(data.price); 
+    }
+      if (editingService) {
+        await updateService(editingService.id, data);
+        toast.success("Service updated successfully");
       } else {
-        await createStaff(data);
-        toast.success("Staff created successfully");
+        await createService(data);
+        toast.success("Service created successfully");
       }
-      loadStaff();
+      loadServices();
       closeModal();
     } catch (error) {
       const errorMsg = error.response?.data?.error || "Save failed";
+      console.log(error.response);
+      
       toast.error(errorMsg);
     }
   };
 
+
   const handleDelete = async (id) => {
-    if (window.confirm("Are you sure you want to delete this staff member?")) {
+    if (window.confirm("Are you sure you want to delete this service?")) {
       try {
-        await deleteStaff(id);
-        loadStaff();
+        await deleteService(id);
+        loadServices();
+        toast.success("Service deleted successfully");
       } catch (error) {
         console.error("Delete failed:", error);
+        toast.error("Delete failed");
       }
     }
   };
 
+
   const openCreateModal = () => {
-    setEditingStaff(null);
+    setEditingService(null);
     setShowModal(true);
   };
 
-  const openEditModal = (staff) => {
-    setEditingStaff(staff);
+
+  const openEditModal = (service) => {
+    setEditingService(service);
     setShowModal(true);
   };
 
+ 
   const closeModal = () => {
-    setEditingStaff(null);
+    setEditingService(null);
     setShowModal(false);
   };
+
+
   const handlePageChange = (newPage) => {
-    loadStaff(newPage);
+    loadServices(newPage);
   };
+
+
   const handleLimitChange = (newLimit) => {
     setLimit(newLimit);
-    loadStaff(1, newLimit);
+    loadServices(1, newLimit);
   };
+
   return (
     <div className="container mt-4">
       <div className="d-flex justify-content-between align-items-center mb-3">
-        <h2>Manage Staff</h2>
+        <h2>Manage Services</h2>
         <button className="btn btn-primary" onClick={openCreateModal}>
-          + Add Staff
+          + Add Service
         </button>
       </div>
+
+    
       <div className="d-flex mb-3">
         <LimitDropdown limit={limit} onLimitChange={handleLimitChange} />
         <SearchInput
           value={search}
           onChange={(value) => {
             setSearch(value);
-            loadStaff(1, pagination.limit);
+            loadServices(1, pagination.limit);
           }}
-          placeholder="Search staff by name or email"
+          placeholder="Search services by name or description"
         />
       </div>
-      <StaffTable
-        data={staffList}
+
+    
+      <ServiceTable
+        services={services}
         onEdit={openEditModal}
         onDelete={handleDelete}
       />
+
+   
       <Pagination
         page={pagination.page}
         totalPages={pagination.totalPages}
         onPageChange={handlePageChange}
       />
-      <StaffModal
+
+
+      <ServiceModal
         show={showModal}
-        staff={editingStaff}
+        service={editingService}
         onClose={closeModal}
         onSubmit={handleSave}
       />
@@ -128,4 +153,4 @@ function StaffPage() {
   );
 }
 
-export default StaffPage;
+export default ServicePage;

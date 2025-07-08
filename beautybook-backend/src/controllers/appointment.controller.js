@@ -14,14 +14,31 @@ class AppointmentController {
   }
 
   async getAll(req, res) {
-    const page = req.query.page || 1;
-    const limit = req.query.limit || 10;
+    const {
+      page = 1,
+      limit = 10,
+      search = '',
+      status,
+      dateFrom,
+      dateTo,
+      serviceId,
+    } = req.query;
 
-    const result = await appointmentService.getAllAppointmentsPaginated(
-      page,
-      limit
-    );
-    res.json(result);
+    try {
+      const result = await appointmentService.getAllAppointmentsPaginated({
+        page: Number(page),
+        limit: Number(limit),
+        search,
+        status,
+        dateFrom,
+        dateTo,
+        serviceId,
+      });
+
+      res.json(result);
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
   }
 
   async getById(req, res) {

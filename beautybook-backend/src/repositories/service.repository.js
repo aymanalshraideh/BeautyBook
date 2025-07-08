@@ -2,14 +2,29 @@ const prisma = require("../config/prisma");
 
 class ServiceRepository {
   async create(data) {
-    return prisma.service.create({ data });
+    return prisma.service.create({
+      data: {
+        ...data,
+      },
+    });
   }
 
-  async findAllPaginated(page = 1, limit = 10) {
+  async findAllPaginated(page = 1, limit = 10, search = "") {
     const skip = (page - 1) * limit;
-
+    const searchTerm = String(search || "").trim();
+    // console.log(searchTerm);
+    
+    const where = {
+      ...(searchTerm && {
+        OR: [
+          { name: { contains: searchTerm } },
+       
+        ],
+      }),
+    };
     const [data, total] = await Promise.all([
       prisma.service.findMany({
+        where,
         skip,
         take: Number(limit),
         include: {
@@ -35,7 +50,10 @@ class ServiceRepository {
   async update(id, data) {
     return prisma.service.update({
       where: { id: Number(id) },
-      data,
+      data: {
+        ...data,
+        imageUrl: data.imageUrl,
+      },
     });
   }
 

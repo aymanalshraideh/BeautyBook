@@ -3,6 +3,8 @@ import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
 import Dashboard from "./pages/Dashboard/Dashboard";
 import StaffPage from "./pages/Dashboard/admin/StaffPage";
+import ServicePage from "./pages/Dashboard/admin/ServicePage";
+import AppointmentPage from "./pages/Dashboard/admin/AppointmentPage";
 import PrivateRoute from "./routes/PrivateRoute";
 import Navbar from "./components/Navbar";
 import { ToastContainer } from 'react-toastify';
@@ -23,7 +25,14 @@ function App() {
             </PrivateRoute>
           }
         />
-
+        <Route
+          path="/services"
+          element={
+            <PrivateRoute roles={["admin"]}>
+              <ServicePage />
+            </PrivateRoute>
+          }
+        />
         <Route
           path="/staff"
           element={
@@ -32,7 +41,14 @@ function App() {
             </PrivateRoute>
           }
         />
-
+        <Route
+          path="/appointment"
+          element={
+            <PrivateRoute roles={["admin"]}>
+              <AppointmentPage />
+            </PrivateRoute>
+          }
+        />
         <Route
           path="/customer"
           element={
