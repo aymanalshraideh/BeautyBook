@@ -9,10 +9,10 @@ RUN apk add --no-cache wget
 WORKDIR /app
 
 # Copy package.json and package-lock.json to the container
-COPY package.json package-lock.json ./
+COPY package.json package-lock.json ./ 
 
-# Install dependencies (production)
-RUN npm install --only=production
+# Install dependencies (including dev dependencies, if needed)
+RUN npm install
 
 # Install PM2 globally to run the app in production mode
 RUN npm install -g pm2
@@ -20,8 +20,11 @@ RUN npm install -g pm2
 # Copy the rest of the application code
 COPY . .
 
-# Copy prisma schema to container (if you have prisma)
+# Copy prisma schema to the container (if you have prisma)
 COPY prisma ./prisma
+
+# Run the seed command
+RUN npm run seed
 
 # Expose port 5000 for the backend
 EXPOSE 5000
