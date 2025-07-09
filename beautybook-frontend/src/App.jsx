@@ -4,6 +4,7 @@ import Register from "./pages/auth/Register";
 import Dashboard from "./pages/Dashboard/Dashboard";
 import StaffPage from "./pages/Dashboard/admin/StaffPage";
 import ServicePage from "./pages/Dashboard/admin/ServicePage";
+import Home from "./pages/Home/Home";
 import AppointmentPage from "./pages/Dashboard/admin/AppointmentPage";
 import PrivateRoute from "./routes/PrivateRoute";
 import Navbar from "./components/Navbar";
@@ -14,6 +15,8 @@ function App() {
     <>
       <Navbar />
       <Routes>
+
+        <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
 

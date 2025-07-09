@@ -37,9 +37,11 @@ class ServiceController {
     const page = req.query.page || 1;
     const limit = req.query.limit || 10;
     const search = req.query.search || '';
+    const minPrice = req.query.minPrice || undefined;
+    const maxPrice = req.query.maxPrice || undefined;
 
     try {
-      const result = await serviceService.getAllPaginated(page, limit,search);
+      const result = await serviceService.getAllPaginated(page, limit,search,minPrice,maxPrice);
       res.json(result);
     } catch (err) {
       res.status(500).json({ error: err.message });

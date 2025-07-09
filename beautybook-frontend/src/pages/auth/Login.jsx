@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { loginRequest } from "../../services/auth";
 import { useAuth } from "../../contexts/AuthContext";
@@ -9,7 +9,16 @@ function Login() {
   const [error, setError] = useState("");
 
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { user, token, login } = useAuth();
+
+  // Redirect if logged in
+  useEffect(() => {
+    if (token) {
+      if (user?.role === "admin") navigate("/admin");
+      else if (user?.role === "staff") navigate("/staff");
+      else navigate("/customer");
+    }
+  }, [token, navigate, user]);
 
   const handleLogin = async (e) => {
     e.preventDefault();

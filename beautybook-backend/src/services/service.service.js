@@ -5,8 +5,8 @@ class ServiceService {
     return serviceRepository.create(data);
   }
 
-  async getAllPaginated(page, limit ,search) {
-    return serviceRepository.findAllPaginated(page, limit ,search);
+  async getAllPaginated(page, limit ,search ,minPrice, maxPrice ) {
+    return serviceRepository.findAllPaginated(page, limit ,search,minPrice, maxPrice);
   }
 
   async getServiceById(id) {

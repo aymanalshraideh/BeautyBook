@@ -1,7 +1,13 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { getServices, createService, updateService, deleteService } from "../../../services/serviceService";
+import {
+  getServices,
+  createService,
+  updateService,
+  deleteService,
+} from "../../../services/serviceService";
 import ServiceTable from "../../../components/admin/services/ServiceTable";
 import ServiceModal from "../../../components/admin/services/ServiceModal";
+import ServicePriceRange from "../../../components/admin/services/ServicePriceRange";
 import Pagination from "../../../components/Pagination";
 import LimitDropdown from "../../../components/LimitDropdown";
 import SearchInput from "../../../components/SearchInput";
@@ -18,13 +24,13 @@ function ServicePage() {
   });
   const [limit, setLimit] = useState(10);
   const [search, setSearch] = useState("");
+  const [minPrice, setMinPrice] = useState("");
+  const [maxPrice, setMaxPrice] = useState("");
 
-
+  
   const loadServices = useCallback(
     async (page = 1, limit = 10) => {
-      
-        
-      const res = await getServices(page, limit, search);
+      const res = await getServices(page, limit, search, minPrice, maxPrice);
       setServices(res.data.data);
       setPagination({
         page: res.data.page,
@@ -32,20 +38,18 @@ function ServicePage() {
         totalPages: res.data.totalPages,
       });
     },
-    [search]
+    [search, minPrice, maxPrice] 
   );
 
   useEffect(() => {
     loadServices();
-  }, [loadServices]);
+  }, [loadServices]); 
 
-  
   const handleSave = async (data) => {
     try {
-            
-    if (data.price) {
-      data.price = parseFloat(data.price); 
-    }
+      if (data.price) {
+        data.price = parseFloat(data.price);
+      }
       if (editingService) {
         await updateService(editingService.id, data);
         toast.success("Service updated successfully");
@@ -58,11 +62,10 @@ function ServicePage() {
     } catch (error) {
       const errorMsg = error.response?.data?.error || "Save failed";
       console.log(error.response);
-      
+
       toast.error(errorMsg);
     }
   };
-
 
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this service?")) {
@@ -77,33 +80,36 @@ function ServicePage() {
     }
   };
 
-
   const openCreateModal = () => {
     setEditingService(null);
     setShowModal(true);
   };
-
 
   const openEditModal = (service) => {
     setEditingService(service);
     setShowModal(true);
   };
 
- 
   const closeModal = () => {
     setEditingService(null);
     setShowModal(false);
   };
 
-
   const handlePageChange = (newPage) => {
     loadServices(newPage);
   };
 
-
   const handleLimitChange = (newLimit) => {
     setLimit(newLimit);
     loadServices(1, newLimit);
+  };
+
+  const handlePriceChange = (type, value) => {
+    if (type === "minPrice") {
+      setMinPrice(value);
+    } else if (type === "maxPrice") {
+      setMaxPrice(value);
+    }
   };
 
   return (
@@ -115,7 +121,6 @@ function ServicePage() {
         </button>
       </div>
 
-    
       <div className="d-flex mb-3">
         <LimitDropdown limit={limit} onLimitChange={handleLimitChange} />
         <SearchInput
@@ -126,22 +131,24 @@ function ServicePage() {
           }}
           placeholder="Search services by name or description"
         />
+        <ServicePriceRange
+          minPrice={minPrice}
+          maxPrice={maxPrice}
+          onPriceChange={handlePriceChange}
+        />
       </div>
 
-    
       <ServiceTable
         services={services}
         onEdit={openEditModal}
         onDelete={handleDelete}
       />
 
-   
       <Pagination
         page={pagination.page}
         totalPages={pagination.totalPages}
         onPageChange={handlePageChange}
       />
-
 
       <ServiceModal
         show={showModal}

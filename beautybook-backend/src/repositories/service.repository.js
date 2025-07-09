@@ -9,17 +9,26 @@ class ServiceRepository {
     });
   }
 
-  async findAllPaginated(page = 1, limit = 10, search = "") {
+  async findAllPaginated(
+    page = 1,
+    limit = 10,
+    search = "",
+    minPrice = undefined,
+    maxPrice = undefined
+  ) {
     const skip = (page - 1) * limit;
     const searchTerm = String(search || "").trim();
-    // console.log(searchTerm);
-    
+    console.log(minPrice);
+
     const where = {
       ...(searchTerm && {
-        OR: [
-          { name: { contains: searchTerm } },
-       
-        ],
+        OR: [{ name: { contains: searchTerm } }],
+      }),
+      ...(minPrice && {
+        price: { gte: parseFloat(minPrice) },
+      }),
+      ...(maxPrice && {
+        price: { lte: parseFloat(maxPrice) },
       }),
     };
     const [data, total] = await Promise.all([
