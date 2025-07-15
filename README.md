@@ -89,8 +89,7 @@ Ensure the following tools are installed on your system:
      ```
    - Start the backend:
      ```bash
-     pm2 start app.js --name backend --no-daemon
-     ```
+
 
 3. Frontend:
    - Navigate to `beautybook-frontend/`:
@@ -109,22 +108,9 @@ Ensure the following tools are installed on your system:
 ---
 
 
-### Deployment
 
-1. Frontend: Serve the React app using:
-   ```bash
-   serve -s build
-   ```
-2. Backend: Use PM2 for production:
-   ```bash
-   pm2 start app.js --name backend --no-daemon
-   ```
-
----
 
 
 ## License
 This project is licensed under the MIT License.
 ```
-
-Let me know if you need any modifications or additional details!
